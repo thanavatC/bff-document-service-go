@@ -1,0 +1,13 @@
+server:
+  isProductionMode: false
+  port: ":8080"
+database:
+  host: localhost
+  port: 5432
+  dbname: document_service
+  username: postgres
+  password: postgres
+  sslmode: disable
+  timezone: Asia/Bangkok
+  schema: public
+  gormlogenable: true
