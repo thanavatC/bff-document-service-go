@@ -9,10 +9,10 @@ import (
 )
 
 type DocumentController struct {
-	service *service.DocumentService
+	service service.DocumentService
 }
 
-func NewDocumentController(service *service.DocumentService) *DocumentController {
+func NewDocumentController(service service.DocumentService) *DocumentController {
 	return &DocumentController{
 		service: service,
 	}

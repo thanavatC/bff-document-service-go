@@ -2,70 +2,73 @@ package service
 
 import (
 	"fmt"
-	"time"
 
-	"github.com/google/uuid"
+	"github.com/thanavatC/bff-document-service-go/client"
 	"github.com/thanavatC/bff-document-service-go/model"
-	"github.com/thanavatC/bff-document-service-go/repository"
 )
 
-type DocumentRequestService struct {
-	repo repository.DocumentRequestRepository
+type DocumentRequestService interface {
+	CreateDocumentRequest(req model.CreateDocumentRequestRequest) (*model.DocumentRequest, error)
+	DeleteDocumentRequest(id string) error
+	ListDocumentRequests(page, pageSize int) ([]*model.DocumentRequest, int64, error)
+	ValidateDocumentRequest(id string, req model.ValidateDocumentRequestRequest) (*model.DocumentRequest, error)
 }
 
-func NewDocumentRequestService(repo repository.DocumentRequestRepository) *DocumentRequestService {
-	return &DocumentRequestService{
-		repo: repo,
+type DocumentRequestServiceImpl struct {
+	documentRequestServiceClient client.DocumentRequestServiceClient
+}
+
+func NewDocumentRequestServiceImpl(client client.DocumentRequestServiceClient) DocumentRequestService {
+	return &DocumentRequestServiceImpl{
+		documentRequestServiceClient: client,
 	}
 }
 
-func (s *DocumentRequestService) CreateDocumentRequest(req model.CreateDocumentRequestRequest) (*model.DocumentRequest, error) {
-	// Generate unique ID
-	id := uuid.New().String()
-
-	// Create document request
-	docRequest := &model.DocumentRequest{
-		ID:         id,
-		Name:       req.Name,
-		Type:       req.Type,
-		CompanyID:  req.CompanyID,
-		DocumentID: req.DocumentID,
-		Status:     model.DocumentRequestStatusPending,
-		CreatedAt:  time.Now(),
-		UpdatedAt:  time.Now(),
-	}
-
-	return s.repo.CreateDocumentRequest(docRequest)
-}
-
-func (s *DocumentRequestService) ListDocumentRequests(page, pageSize int) ([]model.DocumentRequest, int64, error) {
-	return s.repo.ListDocumentRequests(page, pageSize)
-}
-
-func (s *DocumentRequestService) DeleteDocumentRequest(id string) error {
-	exists, err := s.repo.DocumentRequestExists(id)
+func (s *DocumentRequestServiceImpl) CreateDocumentRequest(req model.CreateDocumentRequestRequest) (*model.DocumentRequest, error) {
+	resp, err := s.documentRequestServiceClient.CreateDocumentRequest(req)
 	if err != nil {
-		return err
-	}
-	if !exists {
-		return fmt.Errorf("document request not found")
-	}
-	return s.repo.DeleteDocumentRequest(id)
-}
-
-func (s *DocumentRequestService) ValidateDocumentRequest(id string, req model.ValidateDocumentRequestRequest) (*model.DocumentRequest, error) {
-	docRequest, err := s.repo.GetDocumentRequestByID(id)
-	if err != nil {
+		fmt.Printf("Error calling POST document-request-service/document-request: %v\n", err)
 		return nil, err
 	}
+	return resp, nil
+}
 
-	status := model.DocumentRequestStatusRejected
-	if req.IsValid {
-		status = model.DocumentRequestStatusApproved
+func (s *DocumentRequestServiceImpl) DeleteDocumentRequest(id string) error {
+	err := s.documentRequestServiceClient.DeleteDocumentRequest(id)
+	if err != nil {
+		fmt.Printf("Error calling DELETE document-request-service/document-request/%s: %v\n", id, err)
+		return err
+	}
+	return nil
+}
+
+func (s *DocumentRequestServiceImpl) ListDocumentRequests(page, pageSize int) ([]*model.DocumentRequest, int64, error) {
+	resp, err := s.documentRequestServiceClient.ListDocumentRequests(page, pageSize)
+	if err != nil {
+		fmt.Printf("Error calling GET document-request-service/document-requests: %v\n", err)
+		return nil, 0, err
 	}
 
-	docRequest.Status = status
-	docRequest.UpdatedAt = time.Now()
+	// Convert DocumentRequestResponse to DocumentRequest
+	requests := make([]*model.DocumentRequest, len(resp.Requests))
+	for i, req := range resp.Requests {
+		requests[i] = &model.DocumentRequest{
+			ID:         req.ID,
+			CompanyID:  req.CompanyID,
+			DocumentID: req.DocumentID,
+			Status:     req.Status,
+			CreatedAt:  req.CreatedAt,
+			UpdatedAt:  req.UpdatedAt,
+		}
+	}
+	return requests, resp.Total, nil
+}
 
-	return s.repo.UpdateDocumentRequest(docRequest)
+func (s *DocumentRequestServiceImpl) ValidateDocumentRequest(id string, req model.ValidateDocumentRequestRequest) (*model.DocumentRequest, error) {
+	resp, err := s.documentRequestServiceClient.ValidateDocumentRequest(id, req)
+	if err != nil {
+		fmt.Printf("Error calling POST document-request-service/document-request/%s/validate: %v\n", id, err)
+		return nil, err
+	}
+	return resp, nil
 }

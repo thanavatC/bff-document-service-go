@@ -9,10 +9,10 @@ import (
 )
 
 type CompanyController struct {
-	service *service.CompanyService
+	service service.CompanyService
 }
 
-func NewCompanyController(service *service.CompanyService) *CompanyController {
+func NewCompanyController(service service.CompanyService) *CompanyController {
 	return &CompanyController{
 		service: service,
 	}

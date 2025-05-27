@@ -10,10 +10,10 @@ import (
 )
 
 type DocumentRequestController struct {
-	service *service.DocumentRequestService
+	service service.DocumentRequestService
 }
 
-func NewDocumentRequestController(service *service.DocumentRequestService) *DocumentRequestController {
+func NewDocumentRequestController(service service.DocumentRequestService) *DocumentRequestController {
 	return &DocumentRequestController{
 		service: service,
 	}

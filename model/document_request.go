@@ -37,6 +37,12 @@ type CreateDocumentRequestRequest struct {
 	DocumentID string `json:"document_id" binding:"required"`
 }
 
+type UpdateDocumentRequestRequest struct {
+	Name   string `json:"name"`
+	Type   string `json:"type"`
+	Status string `json:"status"`
+}
+
 type ValidateDocumentRequestRequest struct {
 	IsValid bool `json:"is_valid" binding:"required"`
 }

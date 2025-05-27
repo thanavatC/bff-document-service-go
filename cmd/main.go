@@ -1,18 +1,17 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
-	"github.com/SPVJ/document-service-go/config"
-	"github.com/SPVJ/document-service-go/controller"
-	"github.com/SPVJ/document-service-go/repository"
-	"github.com/SPVJ/document-service-go/router"
-	"github.com/SPVJ/document-service-go/service"
-	"github.com/SPVJ/fs-common-lib/core/db"
+	core "github.com/SPVJ/fs-common-lib/core/client"
 	"github.com/SPVJ/fs-common-lib/core/logger"
 	"github.com/SPVJ/fs-common-lib/core/middleware"
 	"github.com/gin-gonic/gin"
+	"github.com/thanavatC/bff-document-service-go/client"
+	"github.com/thanavatC/bff-document-service-go/config"
+	"github.com/thanavatC/bff-document-service-go/controller"
+	"github.com/thanavatC/bff-document-service-go/router"
+	"github.com/thanavatC/bff-document-service-go/service"
 )
 
 func main() {
@@ -27,23 +26,24 @@ func main() {
 
 	newLogger := logger.NewLogger(loggerConfig)
 
-	db := db.New(config.AppConfig.Database)
-
-	fmt.Println(config.AppConfig.Database)
-
 	app := gin.Default()
+
+	// TODO: common middleware stack
 	app.Use(gin.Recovery())
 	app.Use(middleware.New(newLogger))
 
 	// Initialize repositories
-	documentRepo := repository.NewDocumentRepositoryImpl(db)
-	documentRequestRepo := repository.NewDocumentRequestRepositoryImpl(db)
-	companyRepo := repository.NewCompanyRepositoryImpl(db)
+	documentClient := client.NewDocumentServiceClientImpl(
+		core.NewHttpClient(config.AppConfig.Webclient.DocumentService.HttpClientConfig))
+	documentRequestClient := client.NewDocumentRequestServiceClientImpl(
+		core.NewHttpClient(config.AppConfig.Webclient.DocumentService.HttpClientConfig))
+	companyClient := client.NewCompanyServiceClientImpl(
+		core.NewHttpClient(config.AppConfig.Webclient.DocumentService.HttpClientConfig))
 
 	// Initialize services
-	documentService := service.NewDocumentService(documentRepo)
-	documentRequestService := service.NewDocumentRequestService(documentRequestRepo)
-	companyService := service.NewCompanyService(companyRepo)
+	documentService := service.NewDocumentServiceImpl(documentClient)
+	documentRequestService := service.NewDocumentRequestServiceImpl(documentRequestClient)
+	companyService := service.NewCompanyServiceImpl(companyClient)
 
 	// Initialize controllers
 	documentController := controller.NewDocumentController(documentService)

@@ -4,18 +4,57 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/SPVJ/fs-common-lib/core/db"
+	"github.com/SPVJ/fs-common-lib/core/client"
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	Server   Server
-	Database db.Config
+	Server    Server
+	Webclient WebClient
 }
 
 type Server struct {
 	IsProductionMode bool
 	Port             string
+}
+
+type WebClient struct {
+	DocumentService        DocumentService
+	DocumentRequestService DocumentRequestService
+}
+
+type DocumentService struct {
+	client.HttpClientConfig
+	URL URL
+}
+
+type DocumentRequestService struct {
+	client.HttpClientConfig
+	URL DocumentRequestURL
+}
+
+type URL struct {
+	Base                    string
+	ValidateDocument        string
+	DeleteDocument          string
+	UpdateDocument          string
+	ReTranslateDocument     string
+	GetDocumentStatus       string
+	ValidateDocumentRequest string
+	DeleteDocumentRequest   string
+	ListDocumentRequests    string
+	CreateDocumentRequest   string
+	GetCompanies            string
+}
+
+type DocumentRequestURL struct {
+	Base                    string
+	GetDocumentRequest      string
+	CreateDocumentRequest   string
+	UpdateDocumentRequest   string
+	DeleteDocumentRequest   string
+	ListDocumentRequests    string
+	ValidateDocumentRequest string
 }
 
 var AppConfig Config
