@@ -3,9 +3,9 @@ package controller
 import (
 	"net/http"
 
-	"github.com/SPVJ/document-service-go/model"
-	"github.com/SPVJ/document-service-go/service"
 	"github.com/gin-gonic/gin"
+	"github.com/thanavatC/bff-document-service-go/model"
+	"github.com/thanavatC/bff-document-service-go/service"
 )
 
 type DocumentController struct {

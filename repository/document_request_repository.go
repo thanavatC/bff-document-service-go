@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/SPVJ/document-service-go/model"
+	"github.com/thanavatC/bff-document-service-go/model"
 	"gorm.io/gorm"
 )
 

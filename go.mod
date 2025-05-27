@@ -1,4 +1,4 @@
-module github.com/SPVJ/document-service-go
+module github.com/thanavatC/bff-document-service-go
 
 go 1.24.3
 

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/SPVJ/document-service-go/model"
-	"github.com/SPVJ/document-service-go/repository"
+	"github.com/thanavatC/bff-document-service-go/model"
+	"github.com/thanavatC/bff-document-service-go/repository"
 )
 
 type DocumentService struct {
