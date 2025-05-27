@@ -3,7 +3,7 @@ module github.com/SPVJ/document-service-go
 go 1.24.3
 
 require (
-	github.com/SPVJ/fs-common-lib v1.0.2
+	github.com/SPVJ/fs-common-lib v1.0.3
 	github.com/gin-gonic/gin v1.10.0
 	github.com/google/uuid v1.6.0
 	github.com/spf13/viper v1.20.1
@@ -37,6 +37,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
 	github.com/sagikazarmark/locafero v0.7.0 // indirect
+	github.com/sony/gobreaker v1.0.0 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.12.0 // indirect
 	github.com/spf13/cast v1.7.1 // indirect
