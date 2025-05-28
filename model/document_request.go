@@ -27,7 +27,7 @@ type DocumentRequest struct {
 }
 
 func (DocumentRequest) TableName() string {
-	return "document_request"
+	return "document_requests"
 }
 
 type CreateDocumentRequestRequest struct {
