@@ -92,12 +92,13 @@ func (c *DocumentRequestServiceClientImpl) ValidateDocumentRequest(id string, re
 	baseURL := config.AppConfig.Webclient.DocumentService.BaseURL
 	base := config.AppConfig.Webclient.DocumentService.URL.Base
 	path := config.AppConfig.Webclient.DocumentService.URL.ValidateDocumentRequest
-	url := fmt.Sprintf("%v%v%v/%v/validate", baseURL, base, path, id)
+	url := fmt.Sprintf("%v%v%v", baseURL, base, strings.Replace(path, "{id}", id, 1))
 	headers := map[string]string{
 		"Content-Type": "application/json",
 	}
 
 	if err := c.httpClient.Post(req, &response, url, headers); err != nil {
+		fmt.Printf("Error in POST request: %v\n", err)
 		return nil, err
 	}
 
