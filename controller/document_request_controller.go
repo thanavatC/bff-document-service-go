@@ -33,12 +33,15 @@ func (c *DocumentRequestController) CreateDocumentRequest(ctx *gin.Context) {
 	}
 
 	response := model.DocumentRequestResponse{
-		ID:         docRequest.ID,
-		CompanyID:  docRequest.CompanyID,
-		DocumentID: docRequest.DocumentID,
-		Status:     docRequest.Status,
-		CreatedAt:  docRequest.CreatedAt,
-		UpdatedAt:  docRequest.UpdatedAt,
+		ID:           docRequest.ID,
+		CompanyID:    docRequest.CompanyID,
+		CompanyName:  docRequest.CompanyName,
+		DocumentID:   docRequest.DocumentID,
+		FileName:     docRequest.FileName,
+		DocumentType: docRequest.DocumentType,
+		Status:       docRequest.Status,
+		CreatedAt:    docRequest.CreatedAt,
+		UpdatedAt:    docRequest.UpdatedAt,
 	}
 
 	ctx.JSON(http.StatusCreated, response)

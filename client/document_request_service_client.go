@@ -26,24 +26,33 @@ func NewDocumentRequestServiceClientImpl(httpClient client.IHttpClient) Document
 }
 
 func (c *DocumentRequestServiceClientImpl) CreateDocumentRequest(req model.CreateDocumentRequestRequest) (*model.DocumentRequest, error) {
-	var response model.DocumentRequest
+	var response []model.DocumentRequest
 
+	baseURL := config.AppConfig.Webclient.DocumentService.BaseURL
 	base := config.AppConfig.Webclient.DocumentService.URL.Base
 	path := config.AppConfig.Webclient.DocumentService.URL.CreateDocumentRequest
-	url := fmt.Sprintf("%v%v", base, path)
-	headers := map[string]string{}
+	url := fmt.Sprintf("%v%v%v", baseURL, base, path)
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
 
-	if err := c.httpClient.Post(&response, req, url, headers); err != nil {
+	if err := c.httpClient.Post(req, &response, url, headers); err != nil {
+		fmt.Printf("Error in POST request: %v\n", err)
 		return nil, err
 	}
 
-	return &response, nil
+	// Return the first document request from the array
+	if len(response) > 0 {
+		return &response[0], nil
+	}
+	return nil, fmt.Errorf("no document requests were created")
 }
 
 func (c *DocumentRequestServiceClientImpl) DeleteDocumentRequest(id string) error {
+	baseURL := config.AppConfig.Webclient.DocumentService.BaseURL
 	base := config.AppConfig.Webclient.DocumentService.URL.Base
 	path := config.AppConfig.Webclient.DocumentService.URL.DeleteDocumentRequest
-	url := fmt.Sprintf("%v%v/%v", base, path, id)
+	url := fmt.Sprintf("%v%v%v/%v", baseURL, base, path, id)
 	headers := map[string]string{}
 
 	return c.httpClient.Delete(nil, url, headers)
@@ -52,9 +61,10 @@ func (c *DocumentRequestServiceClientImpl) DeleteDocumentRequest(id string) erro
 func (c *DocumentRequestServiceClientImpl) ListDocumentRequests(page, pageSize int) (*model.DocumentRequestListResponse, error) {
 	var response model.DocumentRequestListResponse
 
+	baseURL := config.AppConfig.Webclient.DocumentService.BaseURL
 	base := config.AppConfig.Webclient.DocumentService.URL.Base
 	path := config.AppConfig.Webclient.DocumentService.URL.ListDocumentRequests
-	url := fmt.Sprintf("%v%v?page=%d&page_size=%d", base, path, page, pageSize)
+	url := fmt.Sprintf("%v%v%v?page=%d&page_size=%d", baseURL, base, path, page, pageSize)
 	headers := map[string]string{}
 
 	if err := c.httpClient.Get(&response, url, headers); err != nil {
@@ -67,12 +77,15 @@ func (c *DocumentRequestServiceClientImpl) ListDocumentRequests(page, pageSize i
 func (c *DocumentRequestServiceClientImpl) ValidateDocumentRequest(id string, req model.ValidateDocumentRequestRequest) (*model.DocumentRequest, error) {
 	var response model.DocumentRequest
 
+	baseURL := config.AppConfig.Webclient.DocumentService.BaseURL
 	base := config.AppConfig.Webclient.DocumentService.URL.Base
 	path := config.AppConfig.Webclient.DocumentService.URL.ValidateDocumentRequest
-	url := fmt.Sprintf("%v%v/%v/validate", base, path, id)
-	headers := map[string]string{}
+	url := fmt.Sprintf("%v%v%v/%v/validate", baseURL, base, path, id)
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
 
-	if err := c.httpClient.Post(&response, req, url, headers); err != nil {
+	if err := c.httpClient.Post(req, &response, url, headers); err != nil {
 		return nil, err
 	}
 

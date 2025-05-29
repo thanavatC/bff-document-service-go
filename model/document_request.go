@@ -15,15 +15,18 @@ const (
 )
 
 type DocumentRequest struct {
-	ID         string                `gorm:"primaryKey" json:"id"`
-	CompanyID  string                `gorm:"index" json:"company_id"`
-	DocumentID string                `gorm:"index" json:"document_id"`
-	Name       string                `json:"name"`
-	Type       string                `json:"type"`
-	Status     DocumentRequestStatus `json:"status"`
-	CreatedAt  time.Time             `json:"created_at"`
-	UpdatedAt  time.Time             `json:"updated_at"`
-	DeletedAt  gorm.DeletedAt        `gorm:"index" json:"-"`
+	ID           string                `gorm:"primaryKey" json:"id"`
+	CompanyID    string                `gorm:"index" json:"company_id"`
+	CompanyName  string                `json:"company_name"`
+	DocumentID   string                `gorm:"index" json:"document_id"`
+	Name         string                `json:"name"`
+	Type         string                `json:"type"`
+	FileName     string                `json:"file_name"`
+	DocumentType string                `json:"document_type"`
+	Status       DocumentRequestStatus `json:"status"`
+	CreatedAt    time.Time             `json:"created_at"`
+	UpdatedAt    time.Time             `json:"updated_at"`
+	DeletedAt    gorm.DeletedAt        `gorm:"index" json:"-"`
 }
 
 func (DocumentRequest) TableName() string {
@@ -31,10 +34,10 @@ func (DocumentRequest) TableName() string {
 }
 
 type CreateDocumentRequestRequest struct {
-	Name       string `json:"name" binding:"required"`
-	Type       string `json:"type" binding:"required"`
-	CompanyID  string `json:"company_id" binding:"required"`
-	DocumentID string `json:"document_id" binding:"required"`
+	CompanyID     string   `json:"companyId" binding:"required"`
+	CompanyName   string   `json:"companyName" binding:"required"`
+	Files         []string `json:"files" binding:"required"`
+	DocumentTypes []string `json:"documentTypes" binding:"required"`
 }
 
 type UpdateDocumentRequestRequest struct {
@@ -48,12 +51,15 @@ type ValidateDocumentRequestRequest struct {
 }
 
 type DocumentRequestResponse struct {
-	ID         string                `json:"id"`
-	CompanyID  string                `json:"company_id"`
-	DocumentID string                `json:"document_id"`
-	Status     DocumentRequestStatus `json:"status"`
-	CreatedAt  time.Time             `json:"created_at"`
-	UpdatedAt  time.Time             `json:"updated_at"`
+	ID           string                `json:"id"`
+	CompanyID    string                `json:"company_id"`
+	CompanyName  string                `json:"company_name"`
+	DocumentID   string                `json:"document_id"`
+	FileName     string                `json:"file_name"`
+	DocumentType string                `json:"document_type"`
+	Status       DocumentRequestStatus `json:"status"`
+	CreatedAt    time.Time             `json:"created_at"`
+	UpdatedAt    time.Time             `json:"updated_at"`
 }
 
 type DocumentRequestListResponse struct {
