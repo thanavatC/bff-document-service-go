@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/SPVJ/fs-common-lib/core/client"
 	"github.com/thanavatC/bff-document-service-go/config"
@@ -52,10 +53,21 @@ func (c *DocumentRequestServiceClientImpl) DeleteDocumentRequest(id string) erro
 	baseURL := config.AppConfig.Webclient.DocumentService.BaseURL
 	base := config.AppConfig.Webclient.DocumentService.URL.Base
 	path := config.AppConfig.Webclient.DocumentService.URL.DeleteDocumentRequest
-	url := fmt.Sprintf("%v%v%v/%v", baseURL, base, path, id)
-	headers := map[string]string{}
+	url := fmt.Sprintf("%v%v%v", baseURL, base, strings.Replace(path, "{id}", id, 1))
+	headers := map[string]string{
+		"Accept": "application/json",
+	}
 
-	return c.httpClient.Delete(nil, url, headers)
+	if err := c.httpClient.Delete(nil, url, headers); err != nil {
+		// If the error is about null response body, that's actually a success
+		if strings.Contains(err.Error(), "unexpected end of JSON input") {
+			return nil
+		}
+		fmt.Printf("Error in DELETE request: %v\n", err)
+		return err
+	}
+
+	return nil
 }
 
 func (c *DocumentRequestServiceClientImpl) ListDocumentRequests(page, pageSize int) (*model.DocumentRequestListResponse, error) {
