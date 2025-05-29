@@ -24,10 +24,10 @@ func NewCompanyServiceClientImpl(httpClient client.IHttpClient) CompanyServiceCl
 
 func (c *CompanyServiceClientImpl) GetCompanies() ([]*model.Company, error) {
 	var response []*model.Company
-
+	baseURL := config.AppConfig.Webclient.DocumentService.BaseURL
 	base := config.AppConfig.Webclient.DocumentService.URL.Base
 	path := config.AppConfig.Webclient.DocumentService.URL.GetCompanies
-	url := fmt.Sprintf("%v%v/%v", base, path)
+	url := fmt.Sprintf("%v%v%v", baseURL, base, path)
 	headers := map[string]string{}
 
 	if err := c.httpClient.Get(&response, url, headers); err != nil {
