@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/SPVJ/fs-common-lib/core/client"
 	"github.com/thanavatC/bff-document-service-go/config"
@@ -31,9 +32,10 @@ func (c *DocumentServiceClientImpl) GetDocumentStatus(id string) (string, error)
 		Status string `json:"status"`
 	}
 
+	baseURL := config.AppConfig.Webclient.DocumentService.BaseURL
 	base := config.AppConfig.Webclient.DocumentService.URL.Base
 	path := config.AppConfig.Webclient.DocumentService.URL.GetDocumentStatus
-	url := fmt.Sprintf("%v%v/%v", base, path, id)
+	url := fmt.Sprintf("%v%v%v", baseURL, base, strings.Replace(path, "{id}", id, 1))
 	headers := map[string]string{}
 
 	if err := c.httpClient.Get(&response, url, headers); err != nil {
