@@ -1,0 +1,21 @@
+FROM --platform=linux/amd64 golang:1.24
+
+WORKDIR /app
+
+COPY bff-document-service-go/ ./bff-document-service-go
+COPY bff-document-service-go/config ./config
+COPY fs-common-lib ./fs-common-lib
+
+WORKDIR /app/bff-document-service-go
+
+RUN go mod edit -replace=github.com/SPVJ/fs-common-lib=../fs-common-lib
+
+RUN go mod download
+
+WORKDIR /app/bff-document-service-go/cmd
+
+RUN CGO_ENABLED=0 GOOS=linux go build -o /app/svc
+
+EXPOSE 8080
+
+CMD ["/app/svc"]
