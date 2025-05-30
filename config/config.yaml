@@ -11,3 +11,34 @@ database:
   timezone: Asia/Bangkok
   schema: public
   gormlogenable: true
+webclient:
+  documentService:
+    baseURL: "http://localhost:8081"
+    timeout: 30
+    retryCount: 3
+    retryWaitTime: 1
+    url:
+      base: "/api"
+      validateDocument: "/documents/{id}/validate"
+      deleteDocument: "/documents/{id}"
+      updateDocument: "/documents/{id}"
+      reTranslateDocument: "/documents/{id}/retranslate"
+      getDocumentStatus: "/documents/{id}/status"
+      validateDocumentRequest: "/document-requests/{id}/validate"
+      deleteDocumentRequest: "/document-requests/{id}"
+      listDocumentRequests: "/document-requests"
+      createDocumentRequest: "/document-requests"
+      getCompanies: "/companies"
+  documentRequestService:
+    baseURL: "http://localhost:8081"
+    timeout: 30
+    retryCount: 3
+    retryWaitTime: 1
+    url:
+      base: "/api"
+      getDocumentRequest: "/document-requests/{id}"
+      createDocumentRequest: "/document-requests"
+      updateDocumentRequest: "/document-requests/{id}"
+      deleteDocumentRequest: "/document-requests/{id}"
+      listDocumentRequests: "/document-requests"
+      validateDocumentRequest: "/document-requests/{id}/validate"

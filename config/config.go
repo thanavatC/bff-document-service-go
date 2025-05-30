@@ -25,12 +25,14 @@ type WebClient struct {
 
 type DocumentService struct {
 	client.HttpClientConfig
-	URL URL
+	BaseURL string
+	URL     URL
 }
 
 type DocumentRequestService struct {
 	client.HttpClientConfig
-	URL DocumentRequestURL
+	BaseURL string
+	URL     DocumentRequestURL
 }
 
 type URL struct {

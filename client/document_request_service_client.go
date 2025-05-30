@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/SPVJ/fs-common-lib/core/client"
 	"github.com/thanavatC/bff-document-service-go/config"
@@ -26,35 +27,56 @@ func NewDocumentRequestServiceClientImpl(httpClient client.IHttpClient) Document
 }
 
 func (c *DocumentRequestServiceClientImpl) CreateDocumentRequest(req model.CreateDocumentRequestRequest) (*model.DocumentRequest, error) {
-	var response model.DocumentRequest
+	var response []model.DocumentRequest
 
+	baseURL := config.AppConfig.Webclient.DocumentService.BaseURL
 	base := config.AppConfig.Webclient.DocumentService.URL.Base
 	path := config.AppConfig.Webclient.DocumentService.URL.CreateDocumentRequest
-	url := fmt.Sprintf("%v%v", base, path)
-	headers := map[string]string{}
+	url := fmt.Sprintf("%v%v%v", baseURL, base, path)
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
 
-	if err := c.httpClient.Post(&response, req, url, headers); err != nil {
+	if err := c.httpClient.Post(req, &response, url, headers); err != nil {
+		fmt.Printf("Error in POST request: %v\n", err)
 		return nil, err
 	}
 
-	return &response, nil
+	// Return the first document request from the array
+	if len(response) > 0 {
+		return &response[0], nil
+	}
+	return nil, fmt.Errorf("no document requests were created")
 }
 
 func (c *DocumentRequestServiceClientImpl) DeleteDocumentRequest(id string) error {
+	baseURL := config.AppConfig.Webclient.DocumentService.BaseURL
 	base := config.AppConfig.Webclient.DocumentService.URL.Base
 	path := config.AppConfig.Webclient.DocumentService.URL.DeleteDocumentRequest
-	url := fmt.Sprintf("%v%v/%v", base, path, id)
-	headers := map[string]string{}
+	url := fmt.Sprintf("%v%v%v", baseURL, base, strings.Replace(path, "{id}", id, 1))
+	headers := map[string]string{
+		"Accept": "application/json",
+	}
 
-	return c.httpClient.Delete(nil, url, headers)
+	if err := c.httpClient.Delete(nil, url, headers); err != nil {
+		// If the error is about null response body, that's actually a success
+		if strings.Contains(err.Error(), "unexpected end of JSON input") {
+			return nil
+		}
+		fmt.Printf("Error in DELETE request: %v\n", err)
+		return err
+	}
+
+	return nil
 }
 
 func (c *DocumentRequestServiceClientImpl) ListDocumentRequests(page, pageSize int) (*model.DocumentRequestListResponse, error) {
 	var response model.DocumentRequestListResponse
 
+	baseURL := config.AppConfig.Webclient.DocumentService.BaseURL
 	base := config.AppConfig.Webclient.DocumentService.URL.Base
 	path := config.AppConfig.Webclient.DocumentService.URL.ListDocumentRequests
-	url := fmt.Sprintf("%v%v?page=%d&page_size=%d", base, path, page, pageSize)
+	url := fmt.Sprintf("%v%v%v?page=%d&page_size=%d", baseURL, base, path, page, pageSize)
 	headers := map[string]string{}
 
 	if err := c.httpClient.Get(&response, url, headers); err != nil {
@@ -67,12 +89,16 @@ func (c *DocumentRequestServiceClientImpl) ListDocumentRequests(page, pageSize i
 func (c *DocumentRequestServiceClientImpl) ValidateDocumentRequest(id string, req model.ValidateDocumentRequestRequest) (*model.DocumentRequest, error) {
 	var response model.DocumentRequest
 
+	baseURL := config.AppConfig.Webclient.DocumentService.BaseURL
 	base := config.AppConfig.Webclient.DocumentService.URL.Base
 	path := config.AppConfig.Webclient.DocumentService.URL.ValidateDocumentRequest
-	url := fmt.Sprintf("%v%v/%v/validate", base, path, id)
-	headers := map[string]string{}
+	url := fmt.Sprintf("%v%v%v", baseURL, base, strings.Replace(path, "{id}", id, 1))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
 
-	if err := c.httpClient.Post(&response, req, url, headers); err != nil {
+	if err := c.httpClient.Post(req, &response, url, headers); err != nil {
+		fmt.Printf("Error in POST request: %v\n", err)
 		return nil, err
 	}
 

@@ -53,12 +53,15 @@ func (s *DocumentRequestServiceImpl) ListDocumentRequests(page, pageSize int) ([
 	requests := make([]*model.DocumentRequest, len(resp.Requests))
 	for i, req := range resp.Requests {
 		requests[i] = &model.DocumentRequest{
-			ID:         req.ID,
-			CompanyID:  req.CompanyID,
-			DocumentID: req.DocumentID,
-			Status:     req.Status,
-			CreatedAt:  req.CreatedAt,
-			UpdatedAt:  req.UpdatedAt,
+			ID:           req.ID,
+			CompanyID:    req.CompanyID,
+			CompanyName:  req.CompanyName,
+			DocumentID:   req.DocumentID,
+			FileName:     req.FileName,
+			DocumentType: req.DocumentType,
+			Status:       req.Status,
+			CreatedAt:    req.CreatedAt,
+			UpdatedAt:    req.UpdatedAt,
 		}
 	}
 	return requests, resp.Total, nil
